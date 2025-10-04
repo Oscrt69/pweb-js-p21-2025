@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Collection</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2>CalonResto.com</h2>
+            </div>
+            <div class="nav-user">
+                <span id="userName" class="user-name"></span>
+                <button id="logoutButton" class="btn btn-secondary">Logout</button>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Discover Amazing Recipes</h1>
+                <p>Explore our collection of delicious recipes from around the world</p>
+            </div>
+            
+            <div class="filters-section">
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Search recipes by name, cuisine, ingredients, or tags..."
+                        class="search-input"
+                    >
+                    <span class="search-icon">🔍</span>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="cuisineFilter">Filter by Cuisine:</label>
+                    <select id="cuisineFilter" class="filter-select">
+                        <option value="">All Cuisines</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="loadingState" class="loading-state hidden">
+                <div class="spinner-large"></div>
+                <p>Loading recipes...</p>
+            </div>
+            
+            <div id="errorState" class="error-state hidden">
+                <p>⚠️ Failed to load recipes. Please try again later.</p>
+            </div>
+            
+            <div id="recipesGrid" class="recipes-grid"></div>
+            
+            <div id="showMoreContainer" class="show-more-container hidden">
+                <button id="showMoreButton" class="btn btn-primary">Show More Recipes</button>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Recipe Detail Modal -->
+    <div id="recipeModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">&times;</button>
+            <div id="recipeDetail"></div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
