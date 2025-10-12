@@ -1,11 +1,9 @@
-// Global state
 let allRecipes = []
 let filteredRecipes = []
 let displayedRecipes = 0
 const recipesPerPage = 6
 let searchTimeout = null
 
-// Check authentication on recipes page
 if (window.location.pathname.includes("recipes.html")) {
   const user = localStorage.getItem("firstName")
   if (!user) {
@@ -15,7 +13,6 @@ if (window.location.pathname.includes("recipes.html")) {
   }
 }
 
-// Login Page Logic
 if (window.location.pathname.includes("index.html") || window.location.pathname === "/") {
   const loginForm = document.getElementById("loginForm")
 
@@ -26,7 +23,6 @@ if (window.location.pathname.includes("index.html") || window.location.pathname 
 
 async function handleLogin(e) {
   e.preventDefault()
-
   const username = document.getElementById("username").value.trim()
   const password = document.getElementById("password").value
   const errorMessage = document.getElementById("errorMessage")
@@ -35,24 +31,20 @@ async function handleLogin(e) {
   const buttonText = document.getElementById("buttonText")
   const loadingSpinner = document.getElementById("loadingSpinner")
 
-  // Hide previous messages
   errorMessage.classList.add("hidden")
   successMessage.classList.add("hidden")
 
-  // Validate inputs
   if (!username || !password) {
     showError("Please enter both username and password")
     return
   }
 
-  // Show loading state
   loginButton.disabled = true
   buttonText.classList.add("hidden")
   loadingSpinner.classList.remove("hidden")
 
   try {
-    // Fetch users data
-    const response = await fetch("dummyusers.txt")
+    const response = await fetch("https://dummyjson.com/users")
 
     if (!response.ok) {
       throw new Error("Failed to fetch user data")
@@ -60,8 +52,6 @@ async function handleLogin(e) {
 
     const data = await response.json()
     const users = data.users
-
-    // Find matching user
     const user = users.find((u) => u.username === username)
 
     if (!user) {
@@ -70,19 +60,16 @@ async function handleLogin(e) {
       return
     }
 
-    // Check password
     if (user.password !== password) {
       showError("Invalid username or password")
       resetLoginButton()
       return
     }
 
-    // Login successful
     localStorage.setItem("firstName", user.firstName)
     successMessage.textContent = `Welcome, ${user.firstName}! Redirecting...`
     successMessage.classList.remove("hidden")
 
-    // Redirect after short delay
     setTimeout(() => {
       window.location.href = "recipes.html"
     }, 1500)
@@ -104,7 +91,6 @@ async function handleLogin(e) {
   }
 }
 
-// Recipes Page Logic
 async function initRecipesPage() {
   const userName = document.getElementById("userName")
   const logoutButton = document.getElementById("logoutButton")
@@ -112,13 +98,11 @@ async function initRecipesPage() {
   const cuisineFilter = document.getElementById("cuisineFilter")
   const showMoreButton = document.getElementById("showMoreButton")
 
-  // Display user name
   const firstName = localStorage.getItem("firstName")
   if (userName) {
     userName.textContent = `Welcome, ${firstName}!`
   }
 
-  // Logout functionality
   if (logoutButton) {
     logoutButton.addEventListener("click", () => {
       localStorage.removeItem("firstName")
@@ -126,27 +110,22 @@ async function initRecipesPage() {
     })
   }
 
-  // Load recipes
   await loadRecipes()
-
-  // Search with debouncing
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
       clearTimeout(searchTimeout)
       searchTimeout = setTimeout(() => {
         handleSearch(e.target.value)
-      }, 300) // 300ms debounce
+      }, 300)
     })
   }
 
-  // Cuisine filter
   if (cuisineFilter) {
     cuisineFilter.addEventListener("change", (e) => {
       handleCuisineFilter(e.target.value)
     })
   }
 
-  // Show more button
   if (showMoreButton) {
     showMoreButton.addEventListener("click", () => {
       displayedRecipes += recipesPerPage
@@ -165,7 +144,7 @@ async function loadRecipes() {
   recipesGrid.innerHTML = ""
 
   try {
-    const response = await fetch("dummyrecipes.txt")
+    const response = await fetch("https://dummyjson.com/recipes")
 
     if (!response.ok) {
       throw new Error("Failed to fetch recipes")
@@ -175,10 +154,7 @@ async function loadRecipes() {
     allRecipes = data.recipes
     filteredRecipes = [...allRecipes]
 
-    // Populate cuisine filter
     populateCuisineFilter()
-
-    // Initial render
     displayedRecipes = recipesPerPage
     renderRecipes()
 
@@ -209,23 +185,14 @@ function handleSearch(searchTerm) {
     filteredRecipes = [...allRecipes]
   } else {
     filteredRecipes = allRecipes.filter((recipe) => {
-      // Search in name
       if (recipe.name.toLowerCase().includes(term)) return true
-
-      // Search in cuisine
       if (recipe.cuisine.toLowerCase().includes(term)) return true
-
-      // Search in ingredients
       if (recipe.ingredients.some((ing) => ing.toLowerCase().includes(term))) return true
-
-      // Search in tags
       if (recipe.tags.some((tag) => tag.toLowerCase().includes(term))) return true
 
       return false
     })
   }
-
-  // Apply cuisine filter if active
   const cuisineFilter = document.getElementById("cuisineFilter")
   if (cuisineFilter.value) {
     filteredRecipes = filteredRecipes.filter((recipe) => recipe.cuisine === cuisineFilter.value)
@@ -245,7 +212,6 @@ function handleCuisineFilter(cuisine) {
     filteredRecipes = allRecipes.filter((recipe) => recipe.cuisine === cuisine)
   }
 
-  // Apply search filter if active
   if (searchTerm) {
     filteredRecipes = filteredRecipes.filter((recipe) => {
       if (recipe.name.toLowerCase().includes(searchTerm)) return true
@@ -280,7 +246,6 @@ function renderRecipes() {
     recipesGrid.appendChild(card)
   })
 
-  // Show/hide "Show More" button
   if (displayedRecipes < filteredRecipes.length) {
     showMoreContainer.classList.remove("hidden")
   } else {
@@ -418,7 +383,6 @@ function showRecipeDetail(recipeId) {
   document.body.style.overflow = "hidden"
 }
 
-// Close modal functionality
 if (window.location.pathname.includes("recipes.html")) {
   const closeModal = document.getElementById("closeModal")
   const modal = document.getElementById("recipeModal")
